@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FiveM Bind Creator</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #111318;
+    --surface2: #1a1e27;
+    --border: #2a3040;
+    --accent: #00d4ff;
+    --accent2: #ff6b35;
+    --text: #e0e6f0;
+    --muted: #6b7a99;
+    --green: #00ff88;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at 10% 60%, rgba(0,212,255,0.05) 0%, transparent 50%),
+      radial-gradient(ellipse at 90% 10%, rgba(255,107,53,0.05) 0%, transparent 50%);
+  }
+
+  header {
+    padding: 28px 40px 22px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: rgba(10,12,16,0.8);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .logo-icon {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  h1 {
+    font-family: 'Orbitron', monospace;
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subtitle {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    margin-top: 3px;
+  }
+
+  main {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 32px 20px 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .step {
+    display: flex;
+    gap: 0;
+    position: relative;
+  }
+
+  .step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 19px;
+    top: 52px;
+    bottom: -1px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--border), transparent);
+    z-index: 0;
+  }
+
+  .step-number {
+    flex-shrink: 0;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: var(--surface2);
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-top: 10px;
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+  }
+
+  .step-body {
+    flex: 1;
+    margin-left: 16px;
+    padding-bottom: 28px;
+  }
+
+  .step-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 14px 0 4px;
+    letter-spacing: 1px;
+  }
+
+  .step-desc {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 14px;
+    line-height: 1.8;
+  }
+
+  .step-desc strong { color: var(--accent); font-weight: 600; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .row { display: flex; gap: 12px; flex-wrap: wrap; }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    min-width: 110px;
+  }
+
+  .field-label {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 9px;
+    color: var(--accent);
+    letter-spacing: 1px;
+  }
+
+  input[type="text"], input[type="number"] {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    padding: 11px 14px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%;
+  }
+
+  input[type="text"]:focus, input[type="number"]:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0,212,255,0.08);
+  }
+
+  .toggle-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    user-select: none;
+  }
+
+  .toggle-wrapper:hover { border-color: var(--accent); }
+  .toggle-wrapper.active { border-color: var(--accent2); background: rgba(255,107,53,0.06); }
+
+  .toggle-switch {
+    width: 40px; height: 22px;
+    background: var(--border);
+    border-radius: 11px;
+    position: relative;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+
+  .toggle-switch::after {
+    content: '';
+    position: absolute;
+    width: 16px; height: 16px;
+    background: white;
+    border-radius: 50%;
+    top: 3px; left: 3px;
+    transition: transform 0.2s;
+  }
+
+  .toggle-wrapper.active .toggle-switch { background: var(--accent2); }
+  .toggle-wrapper.active .toggle-switch::after { transform: translateX(18px); }
+
+  .toggle-text { font-size: 13px; line-height: 1.4; }
+  .toggle-text small { display: block; font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+  .colors-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  .color-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 2px solid var(--border);
+    background: var(--surface2);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.18s;
+    user-select: none;
+    text-align: left;
+  }
+
+  .color-btn:hover { border-color: #555; transform: translateY(-1px); }
+
+  .color-btn.selected {
+    border-color: white;
+    box-shadow: 0 0 12px rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.07);
+  }
+
+  .color-dot {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+
+  .color-code {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 1px;
+    display: block;
+  }
+
+  .status-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    margin-top: 12px;
+    transition: all 0.2s;
+  }
+
+  .status-bar.idle { background: rgba(107,122,153,0.1); color: var(--muted); border: 1px solid var(--border); }
+  .status-bar.selected-color { background: rgba(0,212,255,0.08); color: var(--accent); border: 1px solid rgba(0,212,255,0.3); }
+  .status-bar.warning { background: rgba(255,107,53,0.08); color: var(--accent2); border: 1px solid rgba(255,107,53,0.3); }
+
+  .words-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-height: 42px;
+    padding: 4px 0;
+  }
+
+  .word-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 15px;
+    cursor: pointer;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    transition: all 0.15s;
+    font-family: 'JetBrains Mono', monospace;
+    white-space: nowrap;
+    position: relative;
+  }
+
+  .word-chip:hover {
+    border-color: var(--accent);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+
+  .word-chip .remove-color {
+    display: none;
+    position: absolute;
+    top: -6px; right: -6px;
+    width: 16px; height: 16px;
+    background: var(--accent2);
+    border-radius: 50%;
+    font-size: 9px;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    line-height: 1;
+    font-weight: bold;
+  }
+
+  .word-chip.colored .remove-color { display: flex; }
+
+  .empty-words {
+    color: var(--muted);
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    padding: 6px 0;
+    font-style: italic;
+  }
+
+  .preview-box {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+  }
+
+  .preview-inner {
+    font-size: 18px;
+    font-weight: bold;
+    font-style: italic;
+    text-decoration: underline;
+    line-height: 1.4;
+    color: white;
+  }
+
+  .preview-empty {
+    font-size: 12px;
+    color: var(--muted);
+    font-style: italic;
+    font-weight: normal;
+    text-decoration: none;
+  }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+    margin-top: 2px;
+  }
+
+  .output-card {
+    background: var(--surface);
+    border: 2px solid var(--accent);
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 0 30px rgba(0,212,255,0.08);
+    margin-top: 8px;
+  }
+
+  .output-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  .output-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--accent);
+  }
+
+  .copy-btn {
+    background: linear-gradient(135deg, var(--accent), #007a99);
+    border: none;
+    color: #000;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 8px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+  }
+
+  .copy-btn:hover { transform: scale(1.05); box-shadow: 0 4px 14px rgba(0,212,255,0.3); }
+  .copy-btn.copied { background: linear-gradient(135deg, var(--green), #007a44); }
+
+  .output-code {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 12px;
+    word-break: break-all;
+    line-height: 1.8;
+    color: var(--green);
+    min-height: 50px;
+  }
+
+  .text-section { transition: opacity 0.25s, filter 0.25s; }
+  .text-section.hidden { opacity: 0.25; pointer-events: none; filter: grayscale(0.8); }
+
+  @media (max-width: 600px) {
+    main { padding: 20px 12px 60px; }
+    .colors-grid { grid-template-columns: repeat(2, 1fr); }
+    header { padding: 20px 16px; }
+    h1 { font-size: 16px; }
+    .step:not(:last-child)::after { left: 19px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-icon">🎮</div>
+  <div>
+    <h1>BIND CREATOR</h1>
+    <div class="subtitle">FIVEM · ROLEPLAY · EMOTE BUILDER</div>
+  </div>
+</header>
+
+<main>
+
+  <!-- STEP 1 -->
+  <div class="step">
+    <div class="step-number">1</div>
+    <div class="step-body">
+      <div class="step-title">Tecla, Tamanho e Animação</div>
+      <div class="step-desc">
+        <strong>Tecla</strong> — botão do teclado que ativa a bind no jogo (ex: F5, G, H)<br>
+        <strong>Tamanho</strong> — tamanho da letra do texto que aparece no chat<br>
+        <strong>Animação</strong> — emote do personagem (ex: <strong>e dancar</strong>, <strong>e sentar</strong>)
+      </div>
+      <div class="card">
+        <div class="row">
+          <div class="field" style="max-width:130px;">
+            <div class="field-label">⌨ Tecla <span class="badge">ex: F5</span></div>
+            <input type="text" id="tecla" placeholder="F5" maxlength="20">
+          </div>
+          <div class="field" style="max-width:130px;">
+            <div class="field-label">🔤 Tamanho <span class="badge">fonte</span></div>
+            <input type="number" id="tamanho" placeholder="30" value="30" min="1" max="100">
+          </div>
+          <div class="field">
+            <div class="field-label">🕺 Animação</div>
+            <input type="text" id="animacao" placeholder="e dancar">
+          </div>
+        </div>
+
+        <div style="margin-top:14px;">
+          <div class="toggle-wrapper" id="semTextoToggle" onclick="toggleSemTexto()">
+            <div class="toggle-switch"></div>
+            <div class="toggle-text">
+              Bind <strong>sem texto</strong> — só animação
+              <small>Ative para usar apenas o emote, sem texto no chat</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step text-section" id="textSection">
+    <div class="step-number">2</div>
+    <div class="step-body">
+      <div class="step-title">Digite o Texto</div>
+      <div class="step-desc">
+        Escreva o que vai aparecer no chat do jogo quando você apertar a tecla.<br>
+        Na próxima etapa você poderá colorir cada palavra.
+      </div>
+      <div class="card">
+        <div class="field-label" style="margin-bottom:8px;">💬 Texto da bind</div>
+        <input type="text" id="textoInput" placeholder="Ex: Oi pessoal, tô dançando!" oninput="renderWords()">
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step text-section" id="textSection2">
+    <div class="step-number">3</div>
+    <div class="step-body">
+      <div class="step-title">Aplique Cores nas Palavras</div>
+      <div class="step-desc">
+        <strong>Passo 1:</strong> Clique em uma cor da paleta para selecioná-la.<br>
+        <strong>Passo 2:</strong> Clique em uma ou mais palavras abaixo para colorir.<br>
+        Para remover a cor de uma palavra, clique no <strong style="color:var(--accent2);">✕</strong> que aparece sobre ela.
+      </div>
+      <div class="card">
+
+        <div class="section-label">🎨 Paleta de cores — clique para selecionar</div>
+        <div class="colors-grid">
+          <button class="color-btn" data-code="~y~" onclick="selectColor(this)">
+            <span class="color-dot" style="background:#ffff00"></span>
+            <span>Amarelo<span class="color-code">~y~</span></span>
+          </button>
+          <button class="color-btn" data-code="~r~" onclick="selectColor(this)">
+            <span class="color-dot" style="background:#ff4444"></span>
+            <span>Vermelho<span class="color-code">~r~</span></span>
+          </button>
+          <button class="color-btn" data-code="~g~" onclick="selectColor(this)">
+            <span class="color-dot" style="background:#44dd44"></span>
+            <span>Verde<span class="color-code">~g~</span></span>
+          </button>
+          <button class="color-btn" data-code="~b~" onclick="selectColor(this)">
+            <span class="color-dot" style="background:#4488ff"></span>
+            <span>Azul<span class="color-code">~b~</span></span>
+          </button>
+          <button class="color-btn" data-code="~q~" onclick="selectColor(this)">
+            <span class="color-dot" style="background:#ff69b4"></span>
+            <span>Rosa<span class="color-code">~q~</span></span>
+          </button>
+          <button class="color-btn" data-code="~p~" onclick="selectColor(this)">
+            <span class="color-dot" style="background:#9b59b6"></span>
+            <span>Roxo<span class="color-code">~p~</span></span>
+          </button>
+          <button class="color-btn" data-code="~v~" onclick="selectColor(this)">
+            <span class="color-dot" style="background:#444; border-color:#666"></span>
+            <span>Preto<span class="color-code">~v~</span></span>
+          </button>
+          <button class="color-btn" data-code="~w~" onclick="selectColor(this)">
+            <span class="color-dot" style="background:#fff; border-color:#999"></span>
+            <span>Branco<span class="color-code">~w~</span></span>
+          </button>
+        </div>
+
+        <div class="status-bar idle" id="statusBar">
+          <span id="statusIcon">💡</span>
+          <span id="statusText">Selecione uma cor acima para começar</span>
+        </div>
+
+        <div style="margin-top:18px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+            <div class="section-label" style="margin:0;">🖱 Palavras — clique para aplicar a cor selecionada</div>
+            <button onclick="clearColors()" style="background:none;border:1px solid var(--border);color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 10px;border-radius:5px;cursor:pointer;letter-spacing:1px;transition:border-color 0.2s;" onmouseover="this.style.borderColor='var(--accent2)'" onmouseout="this.style.borderColor='var(--border)'">✕ Limpar cores</button>
+          </div>
+          <div class="words-area" id="wordChips">
+            <span class="empty-words">Escreva o texto na etapa 2 para ver as palavras aqui...</span>
+          </div>
+        </div>
+
+        <div style="margin-top:18px;">
+          <div class="section-label">👁 Preview — como vai aparecer no jogo</div>
+          <div class="preview-box">
+            <div class="preview-inner" id="previewText">
+              <span class="preview-empty">Aguardando texto...</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- OUTPUT -->
+  <div style="margin-top: 4px; padding-left: 56px;">
+    <div class="output-card">
+      <div class="output-header">
+        <div class="output-title">✅ COMANDO PRONTO — cole no console do FiveM</div>
+        <button class="copy-btn" id="copyBtn" onclick="copyBind()">📋 COPIAR</button>
+      </div>
+      <div class="output-code" id="outputText"></div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  let wordColors = {};
+  let selectedColor = null;
+  let words = [];
+
+  const colorMap = {
+    '~y~': '#ffff00', '~r~': '#ff4444', '~g~': '#44dd44',
+    '~b~': '#4488ff', '~q~': '#ff69b4', '~p~': '#9b59b6',
+    '~v~': '#555',    '~w~': '#ffffff',
+  };
+
+  const colorNames = {
+    '~y~': 'Amarelo', '~r~': 'Vermelho', '~g~': 'Verde',
+    '~b~': 'Azul',    '~q~': 'Rosa',     '~p~': 'Roxo',
+    '~v~': 'Preto',   '~w~': 'Branco',
+  };
+
+  function toggleSemTexto() {
+    const wrapper = document.getElementById('semTextoToggle');
+    wrapper.classList.toggle('active');
+    const active = wrapper.classList.contains('active');
+    document.getElementById('textSection').classList.toggle('hidden', active);
+    document.getElementById('textSection2').classList.toggle('hidden', active);
+    updateOutput();
+  }
+
+  function isSemTexto() {
+    return document.getElementById('semTextoToggle').classList.contains('active');
+  }
+
+  function selectColor(btn) {
+    if (btn.classList.contains('selected')) {
+      btn.classList.remove('selected');
+      selectedColor = null;
+      setStatus('idle', '💡', 'Selecione uma cor acima para começar');
+      return;
+    }
+    document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedColor = btn.getAttribute('data-code');
+    setStatus('selected-color', '✅', `"${colorNames[selectedColor]}" selecionado — agora clique numa palavra abaixo!`);
+  }
+
+  function setStatus(type, icon, text) {
+    const bar = document.getElementById('statusBar');
+    bar.className = 'status-bar ' + type;
+    document.getElementById('statusIcon').textContent = icon;
+    document.getElementById('statusText').textContent = text;
+  }
+
+  function renderWords() {
+    const input = document.getElementById('textoInput').value;
+    words = input.split(' ').filter(w => w.length > 0);
+    Object.keys(wordColors).forEach(k => { if (k >= words.length) delete wordColors[k]; });
+
+    const chips = document.getElementById('wordChips');
+    chips.innerHTML = '';
+
+    if (words.length === 0) {
+      chips.innerHTML = '<span class="empty-words">Escreva o texto na etapa 2 para ver as palavras aqui...</span>';
+      document.getElementById('previewText').innerHTML = '<span class="preview-empty">Aguardando texto...</span>';
+      updateOutput();
+      return;
+    }
+
+    words.forEach((word, i) => {
+      const chip = document.createElement('span');
+      chip.className = 'word-chip';
+      const color = wordColors[i];
+
+      if (color) {
+        chip.classList.add('colored');
+        chip.style.color = colorMap[color];
+        chip.style.borderColor = colorMap[color];
+        chip.style.background = colorMap[color] + '22';
+
+        const rm = document.createElement('span');
+        rm.className = 'remove-color';
+        rm.textContent = '×';
+        rm.onclick = (e) => { e.stopPropagation(); delete wordColors[i]; renderWords(); };
+        chip.appendChild(rm);
+      }
+
+      chip.insertBefore(document.createTextNode(word), chip.firstChild);
+      chip.onclick = () => applyColorToWord(i);
+      chips.appendChild(chip);
+    });
+
+    updatePreview();
+    updateOutput();
+  }
+
+  function applyColorToWord(index) {
+    if (!selectedColor) {
+      setStatus('warning', '⚠️', 'Primeiro selecione uma cor na paleta acima!');
+      return;
+    }
+    if (wordColors[index] === selectedColor) {
+      delete wordColors[index];
+    } else {
+      wordColors[index] = selectedColor;
+    }
+    renderWords();
+  }
+
+  function clearColors() {
+    wordColors = {};
+    renderWords();
+    setStatus('idle', '🧹', 'Cores removidas! Selecione uma cor para recomeçar');
+  }
+
+  function buildColoredText() {
+    if (words.length === 0) return '';
+    let result = '';
+    let i = 0;
+    while (i < words.length) {
+      const color = wordColors[i];
+      if (color) {
+        let group = words[i];
+        let j = i + 1;
+        while (j < words.length && wordColors[j] === color) {
+          group += ' ' + words[j];
+          j++;
+        }
+        result += (result ? ' ' : '') + color + group + color;
+        i = j;
+      } else {
+        result += (result ? ' ' : '') + words[i];
+        i++;
+      }
+    }
+    return result;
+  }
+
+  function updatePreview() {
+    const preview = document.getElementById('previewText');
+    if (words.length === 0) {
+      preview.innerHTML = '<span class="preview-empty">Aguardando texto...</span>';
+      return;
+    }
+    let html = '';
+    words.forEach((word, i) => {
+      const color = wordColors[i];
+      const css = color ? colorMap[color] : '#fff';
+      html += `<span style="color:${css}">${word}</span> `;
+    });
+    preview.innerHTML = html;
+  }
+
+  function buildBind() {
+    const tecla = document.getElementById('tecla').value.trim() || 'TECLA';
+    const tamanho = document.getElementById('tamanho').value.trim() || '30';
+    const animacao = document.getElementById('animacao').value.trim() || 'e dancar';
+
+    if (isSemTexto()) {
+      return `bind keyboard "${tecla}" "${animacao}"`;
+    }
+
+    const coloredText = buildColoredText() || 'SEU TEXTO AQUI';
+    return `bind keyboard "${tecla}" "me ~HC_230~ <font size = '${tamanho}'> <b><i><u>  ~ws~  ${coloredText} ~ws~ ; ${animacao}"`;
+  }
+
+  function updateOutput() {
+    document.getElementById('outputText').textContent = buildBind();
+  }
+
+  function copyBind() {
+    navigator.clipboard.writeText(buildBind()).then(() => {
+      const btn = document.getElementById('copyBtn');
+      btn.textContent = '✅ COPIADO!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = '📋 COPIAR';
+        btn.classList.remove('copied');
+      }, 2500);
+    });
+  }
+
+  ['tecla', 'tamanho', 'animacao'].forEach(id => {
+    document.getElementById(id).addEventListener('input', updateOutput);
+  });
+
+  updateOutput();
+</script>
+</body>
+</html>
