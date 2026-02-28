@@ -310,10 +310,18 @@
         <input type="text" id="tamanho" value="30" placeholder="30" maxlength="3">
       </div>
       <div class="field" style="flex:1 1 160px; min-width:0;">
-        <div class="field-label">🕺 Animação</div>
-        <input type="text" id="animacao" placeholder="e dancar">
+        <div class="field-label">🕺 Animação <span class="pill">principal</span></div>
+        <input type="text" id="animacao" placeholder="e dancar" oninput="updateOutput()">
       </div>
     </div>
+
+    <!-- Extra animations -->
+    <div id="extraAnimacoesWrap" style="margin-top:10px;display:flex;flex-direction:column;gap:8px;"></div>
+
+    <button onclick="addAnimacao()" style="margin-top:10px;background:rgba(176,110,255,0.10);border:1.5px dashed rgba(176,110,255,0.4);color:var(--purple);font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;padding:9px 18px;border-radius:12px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:7px;width:100%;" onmouseover="this.style.background='rgba(176,110,255,0.18)';this.style.borderColor='var(--purple)'" onmouseout="this.style.background='rgba(176,110,255,0.10)';this.style.borderColor='rgba(176,110,255,0.4)'">
+      <span style="font-size:17px;line-height:1;">＋</span> Adicionar animação
+    </button>
+    
     <div class="toggle-wrapper" id="semTextoToggle" onclick="toggleSemTexto()">
       <div class="toggle-switch"></div>
       <div class="toggle-text">
@@ -518,6 +526,42 @@ footer {
 
 <script>
   let wordColors = {}, selectedColor = null, words = [];
+  let extraAnimCount = 0;
+
+  function addAnimacao() {
+    extraAnimCount++;
+    const id = 'animacao_extra_' + extraAnimCount;
+    const wrap = document.getElementById('extraAnimacoesWrap');
+    const div = document.createElement('div');
+    div.id = 'wrap_' + id;
+    div.style.cssText = 'display:flex;gap:8px;align-items:center;';
+    div.innerHTML = `
+      <div class="field" style="flex:1;min-width:0;">
+        <div class="field-label" style="font-size:10px;">🕺 Animação extra ${extraAnimCount}</div>
+        <input type="text" id="${id}" placeholder="e bora" oninput="updateOutput()" style="width:100%;">
+      </div>
+      <button onclick="removeAnimacao('${id}')" title="Remover" style="margin-top:22px;background:rgba(232,121,249,0.10);border:1.5px solid rgba(232,121,249,0.3);color:var(--pink);font-family:'Nunito',sans-serif;font-weight:800;font-size:16px;width:38px;height:38px;border-radius:10px;cursor:pointer;flex-shrink:0;transition:all 0.18s;" onmouseover="this.style.background='rgba(232,121,249,0.22)'" onmouseout="this.style.background='rgba(232,121,249,0.10)'">✕</button>
+    `;
+    wrap.appendChild(div);
+    updateOutput();
+  }
+
+  function removeAnimacao(id) {
+    const wrap = document.getElementById('wrap_' + id);
+    if (wrap) wrap.remove();
+    updateOutput();
+  }
+
+  function getAllAnimacoes() {
+    const main = document.getElementById('animacao').value.trim();
+    const extras = Array.from(document.querySelectorAll('#extraAnimacoesWrap input'))
+      .map(inp => inp.value.trim())
+      .filter(v => v.length > 0);
+    const all = [];
+    if (main) all.push(main);
+    all.push(...extras);
+    return all;
+  }
 
   const colorMap = {
     '~y~':'#ffff00','~r~':'#ff4444','~g~':'#44dd44',
@@ -630,10 +674,11 @@ footer {
   function buildBind() {
     const tecla = document.getElementById('tecla').value.trim() || 'TECLA';
     const tamanho = document.getElementById('tamanho').value.trim() || '30';
-    const animacao = document.getElementById('animacao').value.trim() || 'e dancar';
-    if (isSemTexto()) return `bind keyboard "${tecla}" "${animacao}"`;
+    const animacoes = getAllAnimacoes();
+    const animStr = animacoes.length > 0 ? animacoes.join(' ; ') : 'e dancar';
+    if (isSemTexto()) return `bind keyboard "${tecla}" "${animStr}"`;
     const coloredText = buildColoredText() || 'SEU TEXTO AQUI';
-    return `bind keyboard "${tecla}" "me ~HC_230~ <font size = '${tamanho}'> <b><i><u>  ~ws~  ${coloredText} ~ws~ ; ${animacao}"`;
+    return `bind keyboard "${tecla}" "me ~HC_230~ <font size = '${tamanho}'> <b><i><u>  ~ws~  ${coloredText} ~ws~ ; ${animStr}"`;
   }
 
   function updateOutput() { document.getElementById('outputText').textContent = buildBind(); }
@@ -646,7 +691,10 @@ footer {
     });
   }
 
-  ['tecla','tamanho','animacao'].forEach(id => document.getElementById(id).addEventListener('input', updateOutput));
+  ['tecla','tamanho','animacao'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', updateOutput);
+  });
   updateOutput();
 </script>
 </body>
